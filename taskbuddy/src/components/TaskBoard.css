@@ -1,0 +1,94 @@
+.taskboard-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .board-column {
+    flex: 1;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 1rem;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .board-column-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .board-card {
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .card-checkbox {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .card-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #1976d2;
+  }
+  
+  .card-description {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .card-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: #777;
+  }
+  
+  .card-category,
+  .card-due {
+    background-color: #eeeeee;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+  }
+  
+  .card-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
+  
+  .edit-btn,
+  .delete-btn,
+  .log-btn {
+    padding: 0.35rem 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  
+  .edit-btn {
+    background-color: #1976d2;
+    color: #fff;
+  }
+  
+  .delete-btn {
+    background-color: #e53935;
+    color: #fff;
+  }
+  
+  .log-btn {
+    background-color: #616161;
+    color: #fff;
+  }
+  
