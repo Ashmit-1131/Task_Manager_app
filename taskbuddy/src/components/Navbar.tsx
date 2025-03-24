@@ -1,34 +1,25 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAppDispatch,useAppSelector } from '../app/hooks'
-import { clearUser } from '../features/auth/authSlice'
+import React from "react";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import "./Navbar.css";
 
-const Navbar:React.FC = () => {
-    const navigate=useNavigate()
-    const user=useAppSelector((state)=>state.auth.user)
-    const dispatch=useAppDispatch()
+const Navbar: React.FC = () => {
+  const navigate = useNavigate();
 
-    const signOut=()=>{
-        dispatch(clearUser())
-        navigate("/")
-    }
-    
+  const handleSignOut = async () => {
+    await signOut(auth);
+    navigate("/");
+  };
 
   return (
-    <nav className='navbar'>
-        <div className='navbar-logo'>Task Manager system</div>
-        {
-            user&&(
-                <div className='navbar-user'>
-                    <span>{user.displayName}</span>
-                    <button className='navbar-signout' onClick={signOut}>SignOut</button>
-
-                </div>
-            )
-        }
-
+    <nav className="navbar">
+      <div className="navbar-logo">TaskBuddy</div>
+      <button className="navbar-signout" onClick={handleSignOut}>
+        Sign Out
+      </button>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
