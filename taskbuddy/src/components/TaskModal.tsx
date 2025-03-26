@@ -9,7 +9,7 @@ import { Task } from "../types/Task";
 interface TaskModalProps {
   onClose: () => void;
   onTaskCreated: () => void;
-  editingTask?: Task | null; // if present => edit mode
+  editingTask?: Task | null; 
 }
 
 const TaskModal: React.FC<TaskModalProps> = ({ onClose, onTaskCreated, editingTask }) => {

@@ -1,37 +1,71 @@
+
 .taskform-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  max-width: 500px;
+  width: 90%;
+  margin: 0 auto;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+
+.taskform-title {
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+
+.taskform-input,
+.taskform-textarea,
+.taskform-select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+
+.taskform-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+
+.taskform-submit-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.taskform-submit-btn:hover {
+  background-color: #0056b3;
+}
+
+
+@media (max-width: 768px) {
+  .taskform-container {
+    padding: 15px;
   }
-  
   .taskform-title {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
+    font-size: 1.3rem;
   }
-  
-  .taskform-input,
-  .taskform-select,
-  .taskform-textarea {
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+  .taskform-container {
+    padding: 10px;
   }
-  
-  .taskform-textarea {
-    min-height: 80px;
-    resize: vertical;
+  .taskform-title {
+    font-size: 1.2rem;
   }
-  
-  .taskform-submit-btn {
-    padding: 0.75rem;
-    background-color: #1976d2;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-  
+}

@@ -10,27 +10,28 @@ import ActivityLog from "../components/ActivityLog";
 import { auth } from "../firebase";
 import { Task } from "../types/Task";
 import { getAllTasks, deleteTask, updateTask } from "../features/tasks/taskService";
+import { toast } from "react-toastify";
 import "./TasksPage.css";
 
 const TasksPage: React.FC = () => {
   const navigate = useNavigate();
   const user = auth.currentUser;
 
-
+  // Local UI states
   const [viewMode, setViewMode] = useState<"LIST" | "BOARD">("LIST");
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-
+  // For logs modal
   const [logTaskId, setLogTaskId] = useState<string | null>(null);
   const [showLogModal, setShowLogModal] = useState(false);
 
-
+  // Filters
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<"All" | "Work" | "Personal" | "Other">("All");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
- 
+  // Batch selection
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
 
   useEffect(() => {
@@ -51,6 +52,7 @@ const TasksPage: React.FC = () => {
     enabled: !!user,
   });
 
+  // Filter & sort
   const filteredTasks: Task[] = tasks
     .filter((task: Task) => {
       const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -63,32 +65,52 @@ const TasksPage: React.FC = () => {
       return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
     });
 
+  // Toggle selection
   const toggleSelection = (taskId: string) => {
     setSelectedTaskIds((prev) =>
       prev.includes(taskId) ? prev.filter((id) => id !== taskId) : [...prev, taskId]
     );
   };
 
+  // Batch actions
   const handleBatchDelete = async () => {
-    await Promise.all(selectedTaskIds.map((id) => deleteTask(id)));
-    setSelectedTaskIds([]);
-    refetch();
+    try {
+      await Promise.all(selectedTaskIds.map((id) => deleteTask(id)));
+      setSelectedTaskIds([]);
+      refetch();
+      toast.success("Selected tasks deleted successfully");
+    } catch (error) {
+      toast.error("Error deleting selected tasks");
+    }
   };
 
   const handleBatchMarkCompleted = async () => {
-    await Promise.all(selectedTaskIds.map((id) => updateTask(id, { status: "COMPLETED" })));
-    setSelectedTaskIds([]);
-    refetch();
+    try {
+      await Promise.all(
+        selectedTaskIds.map((id) => updateTask(id, { status: "COMPLETED" }))
+      );
+      setSelectedTaskIds([]);
+      refetch();
+      toast.success("Selected tasks marked as completed");
+    } catch (error) {
+      toast.error("Error updating tasks");
+    }
   };
 
+  // Single task actions
   const handleEdit = (task: Task) => {
     setEditingTask(task);
     setShowModal(true);
   };
 
   const handleDelete = async (taskId: string) => {
-    await deleteTask(taskId);
-    refetch();
+    try {
+      await deleteTask(taskId);
+      refetch();
+      toast.success("Task deleted successfully");
+    } catch (error) {
+      toast.error("Error deleting task");
+    }
   };
 
   const handleViewLog = (taskId: string) => {
@@ -100,14 +122,20 @@ const TasksPage: React.FC = () => {
     taskId: string,
     newStatus: "TO_DO" | "IN_PROGRESS" | "COMPLETED"
   ) => {
-    await updateTask(taskId, { status: newStatus });
-    refetch();
+    try {
+      await updateTask(taskId, { status: newStatus });
+      refetch();
+      toast.success("Task status updated");
+    } catch (error) {
+      toast.error("Error updating status");
+    }
   };
 
   const handleTaskModalClose = () => {
     setShowModal(false);
     setEditingTask(null);
     refetch();
+    // toast.success("Task saved successfully");
   };
 
   const handleOpenAddModal = () => {
@@ -126,21 +154,27 @@ const TasksPage: React.FC = () => {
       <div className="tasks-page-container">
         <div className="tasks-page-header">
           <h2>TaskBuddy</h2>
-          <div className="header-actions">
-  
+          <div className="view-buttons">
+            {/* Two separate view buttons and top header Add Task button */}
             <button className="add-task-btn" onClick={handleOpenAddModal}>
               ADD TASK
             </button>
             <button
-              className="toggle-view-btn"
-              onClick={() => setViewMode(viewMode === "LIST" ? "BOARD" : "LIST")}
+              className={`view-btn ${viewMode === "LIST" ? "active" : ""}`}
+              onClick={() => setViewMode("LIST")}
             >
-              Switch to {viewMode === "LIST" ? "Board" : "List"} View
+              List
+            </button>
+            <button
+              className={`view-btn ${viewMode === "BOARD" ? "active" : ""}`}
+              onClick={() => setViewMode("BOARD")}
+            >
+              Board
             </button>
           </div>
         </div>
 
-        
+         {/* Filters row  */}
         <div className="tasks-filters-row">
           <select
             className="filter-select"
@@ -171,8 +205,8 @@ const TasksPage: React.FC = () => {
           />
           {selectedTaskIds.length > 0 && (
             <div className="batch-actions">
-              <button onClick={handleBatchDelete}>Delete Selected</button>
-              <button onClick={handleBatchMarkCompleted}>Mark Selected Complete</button>
+              <button id="delete" onClick={handleBatchDelete}>Delete Selected</button>
+              <button id="complete" onClick={handleBatchMarkCompleted}>Mark Selected Complete</button>
             </div>
           )}
         </div>
@@ -186,17 +220,20 @@ const TasksPage: React.FC = () => {
             onDelete={handleDelete}
             onViewLog={handleViewLog}
             onStatusChange={handleStatusChange}
-            onAddTask={handleOpenAddModal} 
+            onAddTask={handleOpenAddModal} // For + Add Task in Todo section
           />
         ) : (
           <TaskBoard
-            tasks={filteredTasks}
-            selectedTaskIds={selectedTaskIds}
-            toggleSelection={toggleSelection}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onViewLog={handleViewLog}
-          />
+  tasks={filteredTasks}
+  selectedTaskIds={selectedTaskIds}
+  toggleSelection={toggleSelection}
+  onEdit={handleEdit}
+  onDelete={handleDelete}
+  onViewLog={handleViewLog}
+  onStatusChange={handleStatusChange}
+  onAddTask={handleOpenAddModal}
+/>
+
         )}
 
         {filteredTasks.length === 0 && (
@@ -211,7 +248,6 @@ const TasksPage: React.FC = () => {
           editingTask={editingTask}
         />
       )}
-
       {showLogModal && logTaskId && (
         <ActivityLog taskId={logTaskId} onClose={handleLogModalClose} />
       )}
@@ -220,3 +256,4 @@ const TasksPage: React.FC = () => {
 };
 
 export default TasksPage;
+

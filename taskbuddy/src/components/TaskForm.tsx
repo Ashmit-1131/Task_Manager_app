@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useAppDispatch } from "../app/hooks";
 import { addTaskThunk, updateTaskThunk } from "../features/tasks/taskSlice";
-import { auth, storage } from "../firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { auth } from "../firebase";
 import { Task } from "../types/Task";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./TaskForm.css";
 
 interface TaskFormProps {
@@ -20,9 +21,6 @@ const TaskForm: React.FC<TaskFormProps> = ({ onTaskCreated, editingTask }) => {
   const [category, setCategory] = useState<"Work" | "Personal" | "Other">("Work");
   const [dueDate, setDueDate] = useState("");
   const [tagsInput, setTagsInput] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
-
 
   useEffect(() => {
     if (editingTask) {
@@ -32,76 +30,65 @@ const TaskForm: React.FC<TaskFormProps> = ({ onTaskCreated, editingTask }) => {
       setDueDate(editingTask.dueDate);
       setTagsInput(editingTask.tags ? editingTask.tags.join(", ") : "");
     } else {
-    
       setTitle("");
       setDescription("");
       setCategory("Work");
       setDueDate("");
       setTagsInput("");
-      setFile(null);
     }
   }, [editingTask]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    setUploading(true);
 
-    let attachmentUrl = editingTask?.attachmentUrl || "";
-    if (file) {
-      try {
-        const storageRef = ref(storage, `attachments/${file.name}-${Date.now()}`);
-        await uploadBytes(storageRef, file);
-        attachmentUrl = await getDownloadURL(storageRef);
-      } catch (error) {
-        console.error("File upload error:", error);
+    try {
+      const tags = tagsInput
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== "");
+
+      if (editingTask) {
+        await dispatch(
+          updateTaskThunk({
+            id: editingTask.id!,
+            updates: {
+              title,
+              description,
+              category,
+              dueDate,
+              tags,
+            },
+          })
+        ).unwrap();
+        toast.success("Task updated successfully!");
+      } else {
+        const newTask = {
+          uid: user.uid,
+          title,
+          description,
+          category,
+          dueDate,
+          status: "TO_DO" as const,
+          tags,
+        };
+        await dispatch(addTaskThunk(newTask)).unwrap();
+        toast.success("Task created successfully!");
       }
+      onTaskCreated();
+    } catch (error: any) {
+      console.error("Error processing task:", error);
+      toast.error(`Error: ${error.message || "An error occurred"}`);
     }
-
-    const tags = tagsInput
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter((tag) => tag !== "");
-
-    if (editingTask) {
-    
-      await dispatch(
-        updateTaskThunk({
-          id: editingTask.id!,
-          updates: {
-            title,
-            description,
-            category,
-            dueDate,
-            tags,
-            attachmentUrl,
-          },
-        })
-      ).unwrap();
-    } else {
-    
-      const newTask = {
-        uid: user.uid,
-        title,
-        description,
-        category,
-        dueDate,
-        status: "TO_DO" as const,
-        attachmentUrl,
-        tags,
-      };
-      await dispatch(addTaskThunk(newTask)).unwrap();
-    }
-
-    setUploading(false);
-    onTaskCreated();
   };
 
   const isEditMode = !!editingTask;
 
   return (
     <form className="taskform-container" onSubmit={handleSubmit}>
-      <h3 className="taskform-title">{isEditMode ? "Edit Task" : "Add Task"}</h3>
+      <h3 className="taskform-title">
+        {isEditMode ? "Edit Task" : "Add Task"}
+      </h3>
       <input
         type="text"
         placeholder="Task Title"
@@ -138,21 +125,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ onTaskCreated, editingTask }) => {
         value={tagsInput}
         onChange={(e) => setTagsInput(e.target.value)}
       />
-      <input
-        type="file"
-        className="taskform-input"
-        onChange={(e) => {
-          if (e.target.files && e.target.files[0]) {
-            setFile(e.target.files[0]);
-          }
-        }}
-      />
-      <button type="submit" className="taskform-submit-btn" disabled={uploading}>
-        {uploading ? "Uploading..." : isEditMode ? "Save Changes" : "Create"}
+      <button type="submit" className="taskform-submit-btn">
+        {isEditMode ? "Save Changes" : "Create"}
       </button>
     </form>
   );
 };
 
 export default TaskForm;
-

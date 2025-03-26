@@ -1,94 +1,229 @@
-.taskboard-container {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-  
-  .board-column {
-    flex: 1;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 1rem;
-    min-height: 500px;
-    display: flex;
+/* Container for the board columns */
+.taskboard-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Each column container */
+.board-column {
+  flex: 1;
+  min-width: 300px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+/* Pastel header colors */
+.todo-header {
+  border-top: 6px solid #ffc4e0;
+}
+.inprogress-header {
+  border-top: 6px solid #a6d4fa;
+}
+.completed-header {
+  border-top: 6px solid #b2fab4;
+}
+
+/* Column header styling */
+.board-column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+  padding: 1rem;
+}
+
+.column-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.collapse-arrow {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* Inline +Add Task button */
+.add-task-inline {
+  background-color: transparent;
+  border: none;
+  color: #1976d2;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* Container for tasks in each column */
+.board-tasklist {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Task card layout */
+.board-taskrow {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 6px;
+  padding: 0.75rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  gap: 1rem;
+  position: relative;
+  flex-direction: column; /* Ensure vertical alignment */
+}
+
+/* Each cell in the task row */
+.board-cell {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+/* Checkbox cell */
+.check-cell {
+  width: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Title and description */
+.title-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.task-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #1976d2;
+}
+
+.task-subtitle {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Due date */
+.due-cell {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* Status cell with pill and dropdown */
+.status-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.status-pill {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.status-pill.to_do {
+  background-color: #ffa6c9;
+}
+
+.status-pill.in_progress {
+  background-color: #a6d4fa;
+}
+
+.status-pill.completed {
+  background-color: #b2fab4;
+}
+
+.status-dropdown {
+  margin-top: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+/* Category cell */
+.category-cell {
+  font-size: 0.9rem;
+}
+
+.category-pill {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  background-color: #eeeeee;
+  color: #333;
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+/* Action cell with 3-dot menu */
+.action-cell {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 3-dot menu container */
+.board-more-btn-container {
+  position: relative;
+}
+
+/* 3-dot button styling */
+.dots-button {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #666;
+}
+
+/* 3-dot dropdown menu */
+.dots-menu {
+  position: absolute;
+  top: 1.5rem;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  width: 100px;
+  z-index: 9999;
+  padding: 5px 0;
+}
+
+.dots-menu button {
+  background: none;
+  border: none;
+  padding: 10px 15px;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.dots-menu button:hover {
+  background-color: #f5f5f5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .taskboard-wrapper {
     flex-direction: column;
   }
-  
-  .board-column-title {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-    color: #333;
-  }
-  
-  .board-card {
-    background-color: #fff;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    margin-bottom: 1rem;
-    padding: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .card-checkbox {
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  .card-title {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #1976d2;
-  }
-  
-  .card-description {
-    font-size: 0.9rem;
-    color: #555;
-  }
-  
-  .card-meta {
-    display: flex;
-    gap: 1rem;
-    font-size: 0.8rem;
-    color: #777;
-  }
-  
-  .card-category,
-  .card-due {
-    background-color: #eeeeee;
-    padding: 0.25rem 0.5rem;
-    border-radius: 12px;
-  }
-  
-  .card-actions {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
-  }
-  
-  .edit-btn,
-  .delete-btn,
-  .log-btn {
-    padding: 0.35rem 0.75rem;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    cursor: pointer;
-  }
-  
-  .edit-btn {
-    background-color: #1976d2;
-    color: #fff;
-  }
-  
-  .delete-btn {
-    background-color: #e53935;
-    color: #fff;
-  }
-  
-  .log-btn {
-    background-color: #616161;
-    color: #fff;
-  }
-  
+}
